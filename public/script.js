@@ -1,7 +1,7 @@
 const menuToggle = document.querySelector(".menu-toggle");
 const navigation = document.querySelector(".navigation");
 const themeToggle = document.querySelector(".theme-toggle");
-const lightThemeStylesheet = document.querySelector('link[href="styles-light.css"]');
+const lightThemeStylesheet = document.querySelector("#light-theme-stylesheet");
 
 function setTheme(theme) {
   const isLight = theme === "light";
@@ -12,6 +12,7 @@ function setTheme(theme) {
   themeToggle.setAttribute("aria-pressed", String(isLight));
   themeToggle.querySelector(".theme-toggle-label").textContent = `${isLight ? "Dark" : "Light"} mode`;
   window.localStorage.setItem("gdgoc-theme", selectedTheme);
+  document.cookie = `gdgoc-theme=${selectedTheme}; Path=/; Max-Age=31536000; SameSite=Lax`;
 }
 
 setTheme(window.localStorage.getItem("gdgoc-theme") === "light" ? "light" : "dark");
@@ -34,8 +35,10 @@ navigation.addEventListener("click", (event) => {
   }
 });
 
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const gallery = document.querySelector(".gallery-art");
 const galleryCard = document.querySelector(".hero-gallery");
+
 const galleryDots = [...document.querySelectorAll(".gallery-dot")];
 const galleryIndex = document.querySelector(".gallery-index");
 const slides = [
@@ -73,17 +76,56 @@ function showSlide(index) {
   });
 }
 
-document.querySelectorAll(".gallery-arrow").forEach((button) => {
-  button.addEventListener("click", () => {
-    showSlide(Number(gallery.dataset.slide) + Number(button.dataset.direction));
+if (gallery && galleryCard) {
+  document.querySelectorAll(".gallery-arrow").forEach((button) => {
+    button.addEventListener("click", () => {
+      showSlide(Number(gallery.dataset.slide) + Number(button.dataset.direction));
+    });
   });
-});
 
-galleryDots.forEach((dot, index) => {
-  dot.addEventListener("click", () => showSlide(index));
-});
+  galleryDots.forEach((dot, index) => {
+    dot.addEventListener("click", () => showSlide(index));
+  });
 
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let autoplayTimer;
+  let autoplayPaused = false;
+
+  function stopAutoplay() {
+    window.clearInterval(autoplayTimer);
+  }
+
+  function startAutoplay() {
+    stopAutoplay();
+    if (!reducedMotion.matches && !autoplayPaused && !document.hidden) {
+      autoplayTimer = window.setInterval(() => {
+        showSlide(Number(gallery.dataset.slide) + 1);
+      }, 6500);
+    }
+  }
+
+  galleryCard.addEventListener("pointerenter", () => {
+    autoplayPaused = true;
+    stopAutoplay();
+  });
+  galleryCard.addEventListener("pointerleave", () => {
+    autoplayPaused = false;
+    startAutoplay();
+  });
+  galleryCard.addEventListener("focusin", () => {
+    autoplayPaused = true;
+    stopAutoplay();
+  });
+  galleryCard.addEventListener("focusout", (event) => {
+    if (!galleryCard.contains(event.relatedTarget)) {
+      autoplayPaused = false;
+      startAutoplay();
+    }
+  });
+  document.addEventListener("visibilitychange", startAutoplay);
+  reducedMotion.addEventListener("change", startAutoplay);
+  startAutoplay();
+}
+
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 const scrollProgress = document.querySelector(".scroll-progress span");
 const header = document.querySelector(".site-header");
@@ -106,7 +148,7 @@ window.addEventListener("scroll", () => {
 updateScrollUI();
 
 const revealTargets = document.querySelectorAll(
-  ".partners-section, .section-copy, .illustration-frame, .faq-illustration, .faq-item, .faq-more, .footer-invite, .footer-social"
+  ".partners-section, .section-copy, .illustration-frame, .faq-illustration, .faq-item, .faq-more, .footer-invite, .footer-social, .projects-page-hero, .project-card, .projects-coming-soon, .team-page-hero, .team-roster-section, .team-departments > h2"
 );
 
 if ("IntersectionObserver" in window && !reducedMotion.matches) {
@@ -149,60 +191,24 @@ document.querySelectorAll(".tech-chip").forEach((button) => {
 });
 
 if (finePointer.matches && !reducedMotion.matches) {
-  [galleryCard, ...document.querySelectorAll(".illustration-frame")].forEach((card) => {
-    card.addEventListener("pointermove", (event) => {
-      const bounds = card.getBoundingClientRect();
-      const x = (event.clientX - bounds.left) / bounds.width;
-      const y = (event.clientY - bounds.top) / bounds.height;
-      card.style.setProperty("--pointer-x", `${Math.round(x * 100)}%`);
-      card.style.setProperty("--pointer-y", `${Math.round(y * 100)}%`);
-      card.style.setProperty("--tilt-x", `${((0.5 - y) * 3).toFixed(2)}deg`);
-      card.style.setProperty("--tilt-y", `${((x - 0.5) * 3).toFixed(2)}deg`);
+  [galleryCard, ...document.querySelectorAll(".illustration-frame")]
+    .filter(Boolean)
+    .forEach((card) => {
+      card.addEventListener("pointermove", (event) => {
+        const bounds = card.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width;
+        const y = (event.clientY - bounds.top) / bounds.height;
+        card.style.setProperty("--pointer-x", `${Math.round(x * 100)}%`);
+        card.style.setProperty("--pointer-y", `${Math.round(y * 100)}%`);
+        card.style.setProperty("--tilt-x", `${((0.5 - y) * 3).toFixed(2)}deg`);
+        card.style.setProperty("--tilt-y", `${((x - 0.5) * 3).toFixed(2)}deg`);
+      });
+
+      card.addEventListener("pointerleave", () => {
+        card.style.removeProperty("--pointer-x");
+        card.style.removeProperty("--pointer-y");
+        card.style.removeProperty("--tilt-x");
+        card.style.removeProperty("--tilt-y");
+      });
     });
-
-    card.addEventListener("pointerleave", () => {
-      card.style.removeProperty("--pointer-x");
-      card.style.removeProperty("--pointer-y");
-      card.style.removeProperty("--tilt-x");
-      card.style.removeProperty("--tilt-y");
-    });
-  });
 }
-
-let autoplayTimer;
-let autoplayPaused = false;
-
-function stopAutoplay() {
-  window.clearInterval(autoplayTimer);
-}
-
-function startAutoplay() {
-  stopAutoplay();
-  if (!reducedMotion.matches && !autoplayPaused && !document.hidden) {
-    autoplayTimer = window.setInterval(() => {
-      showSlide(Number(gallery.dataset.slide) + 1);
-    }, 6500);
-  }
-}
-
-galleryCard.addEventListener("pointerenter", () => {
-  autoplayPaused = true;
-  stopAutoplay();
-});
-galleryCard.addEventListener("pointerleave", () => {
-  autoplayPaused = false;
-  startAutoplay();
-});
-galleryCard.addEventListener("focusin", () => {
-  autoplayPaused = true;
-  stopAutoplay();
-});
-galleryCard.addEventListener("focusout", (event) => {
-  if (!galleryCard.contains(event.relatedTarget)) {
-    autoplayPaused = false;
-    startAutoplay();
-  }
-});
-document.addEventListener("visibilitychange", startAutoplay);
-reducedMotion.addEventListener("change", startAutoplay);
-startAutoplay();

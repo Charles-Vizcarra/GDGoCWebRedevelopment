@@ -24,8 +24,8 @@ export default function Home() {
             <nav className="navigation" id="primary-navigation" aria-label="Main navigation">
               <a className="nav-link is-active" href="#home">Home</a>
               <a className="nav-link" href="https://gdg.community.dev/gdg-on-campus-technological-university-of-the-philippines-manila-philippines/">Events</a>
-              <a className="nav-link" href="#projects">Projects</a>
-              <a className="nav-link" href="#team">Team</a>
+              <a className="nav-link" href="/project">Projects</a>
+              <a className="nav-link" href="/team">Team</a>
               <a className="nav-link shebuilds-link" href="https://www.gdgoctupm.com/shebuilds" aria-label="SheBuilds">
                 <svg className="shebuilds-wordmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 97" role="img" aria-labelledby="shebuilds-title">
                   <title id="shebuilds-title">SheBuilds</title>
@@ -205,7 +205,7 @@ export default function Home() {
                   <p className="section-description section-description-short">
                     Explore what our members are working on and find an idea you can help bring to life.
                   </p>
-                  <a className="button button-dark" href="https://www.gdgoctupm.com/project">
+                  <a className="button button-dark" href="/project">
                     Explore projects <span aria-hidden="true">↗</span>
                   </a>
                 </div>
@@ -338,7 +338,7 @@ export default function Home() {
               </div>
             </div>
             <div className="footer-bottom">
-              <a className="footer-brand" href="#home" aria-label="GDGoC TUP Manila, back to top">
+              <a className="footer-brand" href="/" aria-label="GDGoC TUP Manila, back to home">
                 <img className="brand-mark" src="assets/gdgoc-mark.png" alt="" aria-hidden="true" />
                 <span className="brand-name">
                   <strong>Google Developer Groups on Campus</strong>

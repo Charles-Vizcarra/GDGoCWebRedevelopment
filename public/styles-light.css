@@ -12,6 +12,8 @@
   --partners-bg: #f2f3f5;
   --about-bg: #fff7f5;
   --projects-bg: #f4f7ff;
+  --projects-page-bg: #f2f3f5;
+  --team-page-bg: #f2f3f5;
   --learning-bg: #fff9eb;
   --faq-bg: #f7f8fa;
 }
@@ -394,4 +396,20 @@ h1 {
 .theme-toggle:hover {
   border-color: #9ba1ab;
   background: #f5f6f8;
+}
+
+.projects-page {
+  background: var(--projects-page-bg);
+}
+
+.project-card {
+  border-color: #c9cbd0;
+  background: #f2f3f5;
+  box-shadow: 0 12px 30px rgba(32, 33, 36, 0.1), 0 2px 6px rgba(32, 33, 36, 0.06);
+}
+
+.projects-coming-soon {
+  border-color: #d3d5d9;
+  background: linear-gradient(145deg, #fff, #f8f8f8);
+  box-shadow: 0 12px 28px rgba(32, 33, 36, 0.1), 0 2px 6px rgba(32, 33, 36, 0.05);
 }

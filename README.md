@@ -1,6 +1,6 @@
 # GDGoC TUP Manila
 
-The GDGoC TUP Manila website was redeveloped from a static HTML, CSS, and JavaScript page into a Next.js application. The existing page content, responsive design, styles, and interactive features were carried over. The homepage is now rendered from `app/page.jsx`, with document metadata and shared page setup in `app/layout.jsx`. Static assets, stylesheets, and the existing interaction script are served from `public/`.
+The GDGoC TUP Manila website was redeveloped from a static HTML, CSS, and JavaScript page into a Next.js application. The existing page content, responsive design, styles, and interactive features were carried over. The homepage is rendered from `app/page.jsx`, the projects page is available at `/project`, and the team page is available at `/team`. The pages share document setup and theme behavior from `app/layout.jsx`. Static assets, stylesheets, and the existing interaction script are served from `public/`.
 
 ## Requirements
 
